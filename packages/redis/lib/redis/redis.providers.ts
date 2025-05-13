@@ -1,7 +1,7 @@
 import { Provider, FactoryProvider, ValueProvider } from '@nestjs/common';
 import { RedisModuleOptions, RedisModuleAsyncOptions, RedisOptionsFactory, RedisClients } from './interfaces';
 import { REDIS_OPTIONS, REDIS_CLIENTS, DEFAULT_REDIS, REDIS_MERGED_OPTIONS } from './redis.constants';
-import { create } from './common';
+import { createClient } from './common';
 import { defaultRedisModuleOptions } from './default-options';
 
 export const createOptionsProvider = (options: RedisModuleOptions): ValueProvider<RedisModuleOptions> => ({
@@ -65,26 +65,19 @@ export const redisClientsProvider: FactoryProvider<RedisClients> = {
   useFactory: (options: RedisModuleOptions) => {
     const clients: RedisClients = new Map();
     if (Array.isArray(options.config)) {
-      for (const item of options.config) {
+      options.config.forEach(item =>
         clients.set(
           item.namespace ?? DEFAULT_REDIS,
-          create(
+          createClient(
             { ...options.commonOptions, ...item },
-            { readyLog: options.readyLog, errorLog: options.errorLog, beforeCreate: options.beforeCreate }
+            { readyLog: options.readyLog, errorLog: options.errorLog }
           )
-        );
-      }
+        )
+      );
     } else if (options.config) {
       clients.set(
         options.config.namespace ?? DEFAULT_REDIS,
-        create(
-          { ...options.commonOptions, ...options.config },
-          {
-            readyLog: options.readyLog,
-            errorLog: options.errorLog,
-            beforeCreate: options.beforeCreate
-          }
-        )
+        createClient(options.config, { readyLog: options.readyLog, errorLog: options.errorLog })
       );
     }
     return clients;

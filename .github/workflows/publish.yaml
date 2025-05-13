@@ -1,8 +1,12 @@
 name: Publish
-on: workflow_dispatch
+on: 
+  workflow_dispatch:
+  release:
+    types: [created]
+
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Setup pnpm
@@ -17,8 +21,7 @@ jobs:
           architecture: x64
           registry-url: 'https://registry.npmjs.org'
       - run: pnpm install --frozen-lockfile
-      - run: pnpm -F "@liaoliaots/nestjs-redis" run lint
-      - run: pnpm -F "@liaoliaots/nestjs-redis" run build
-      # - run: pnpm -r run publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - run: pnpm -F "@thuantan2060/nestjs-redis" run build
+      - run: pnpm -F "@thuantan2060/nestjs-redis" publish --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,4 +1,3 @@
-export { ConnectionNotFoundError, MissingConfigurationsError } from './errors';
 export { RedisModule } from './redis/redis.module';
 export { DEFAULT_REDIS } from './redis/redis.constants';
 export { RedisService } from './redis/redis.service';
@@ -7,14 +6,14 @@ export { DEFAULT_CLUSTER } from './cluster/cluster.constants';
 export { ClusterService } from './cluster/cluster.service';
 
 // * Types & Interfaces
-export type { Namespace } from './interfaces';
-export type {
+export { Namespace } from './interfaces';
+export {
   RedisModuleOptions,
   RedisModuleAsyncOptions,
   RedisOptionsFactory,
   RedisClientOptions
 } from './redis/interfaces';
-export type {
+export {
   ClusterModuleOptions,
   ClusterModuleAsyncOptions,
   ClusterOptionsFactory,

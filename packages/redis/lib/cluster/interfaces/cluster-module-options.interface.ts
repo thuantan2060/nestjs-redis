@@ -4,11 +4,8 @@ import { Namespace } from '@/interfaces';
 
 export interface ClusterClientOptions extends ClusterOptions {
   /**
-   * Name of the client. If the name is not given then it will be set to "default".
-   *
-   * Please note that you shouldn't have multiple connections without a namespace, or with the same namespace, otherwise they will get overridden.
-   *
-   * For the default name you can also explicitly import `DEFAULT_CLUSTER`.
+   * Client name. If client name is not given then it will be called "default".
+   * Different clients must have different names.
    *
    * @defaultValue `"default"`
    */
@@ -19,33 +16,20 @@ export interface ClusterClientOptions extends ClusterOptions {
    * @example
    * ```ts
    * // Connect with url
-   * nodes: ['redis://:authpassword@127.0.0.1:16380']
+   * ['redis://:authpassword@127.0.0.1:16380']
    * ```
    *
    * @example
    * ```ts
    * // Connect with host, port
-   * nodes: [
-   *   {
-   *     port: 6380,
-   *     host: '127.0.0.1'
-   *   },
-   *   {
-   *     port: 6381,
-   *     host: '127.0.0.1'
-   *   }
-   * ]
+   * [{ host: '127.0.0.1', port: 16380 }]
    * ```
    */
   nodes: ClusterNode[];
   /**
-   * Called after the client has been created.
-   */
-  created?: (client: Cluster) => void;
-  /**
-   * Function to be executed after the client is created.
+   * Function to be executed as soon as the client is created.
    *
-   * @deprecated Use the new `created` instead.
+   * @param client - The new client created
    */
   onClientCreated?: (client: Cluster) => void;
 }
@@ -60,7 +44,7 @@ export interface ClusterModuleOptions {
   /**
    * If set to `true`, then ready logging will be displayed when the client is ready.
    *
-   * @defaultValue `true`
+   * @defaultValue `false`
    */
   readyLog?: boolean;
   /**
@@ -79,7 +63,7 @@ export interface ClusterModuleAsyncOptions extends Pick<ModuleMetadata, 'imports
   useFactory?: (...args: unknown[]) => ClusterModuleOptions | Promise<ClusterModuleOptions>;
   useClass?: Type<ClusterOptionsFactory>;
   useExisting?: Type<ClusterOptionsFactory>;
-  inject?: (InjectionToken | OptionalFactoryDependency)[];
+  inject?: InjectionToken[] | OptionalFactoryDependency[];
   extraProviders?: Provider[];
 }
 
